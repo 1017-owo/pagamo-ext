@@ -1,0 +1,53 @@
+{
+    "manifest_version": 3,
+    "name": "PaGamO 答案資料庫",
+    "description": "搜尋 / 新增 PaGamO 答案",
+    "version": "1.0.1",
+    "icons": {
+        "32": "./logo/logo-32.png"
+    },
+    "options_page": "settings/index.html",
+    "action": {
+        "default_icon": {
+            "32": "./logo/logo-32.png"
+        },
+        "default_popup": "popup/index.html"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "webRequest"
+    ],
+    "host_permissions": [
+        "*://*/*"
+    ],
+    "background": {
+        "service_worker": "service-worker.js"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self'",
+        "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self'; script-src-elem 'self' blob:"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "*/*"
+            ],
+            "matches": [
+                "*://*/*"
+            ]
+        }
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "./assets/js/pagamo.js",
+                "./assets/js/content.js",
+                "./assets/js/blob-1.0.1.js"
+            ],
+            "matches": [
+                "*://*.pagamo.org/*"
+            ]
+        }
+    ]
+}

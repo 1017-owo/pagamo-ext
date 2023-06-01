@@ -1,0 +1,33 @@
+* {
+    font-family: "Segoe UI", Arial, "Microsoft Jhenghei", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 60px 40px;
+}
+
+.content {
+    padding: 18px;
+    background: rgba(60, 60, 60, 0.1);
+    border-radius: 8px;
+}
+
+.title {
+    text-align: center;
+    font-size: x-large;
+    margin-top: 10px;
+}
+
+.group {
+    padding: 15px 60px 0;
+}
+
+.setting-description {
+    margin-left: 8px;
+    color: rgb(91, 91, 91);
+}
+
+.setting-content {
+    margin-left: 8px;
+}
