@@ -232,13 +232,22 @@ document.cookie = 'pgo-ext-mode=false';
     pkg.msg("PaGamO Answer Database Loaded.");
 
     window.addEventListener("message", (e) => {
-        console.log(e)
-        if (e.data.type === "question") {
+        console.log(e);
+        if (e.data.type === "question" && JSON.parse(e.data.data).status == "ok") {
             question_temp_data = e.data;
             getAnswer();
-        } else if (e.data.type === "answer") {
+        } else if (e.data.type === "answer" && JSON.parse(e.data.data).status == "ok") {
+            var qd = JSON.parse(question_temp_data.data).data.question_data.question;
             console.log(JSON.parse(e.data.give))
-            mode.contests == true && JSON.parse(e.data.data).data.correct == 1 && sendAnswer(JSON.parse(e.data.give).ans);
+            var t = [];
+            if (qd.answer_type == pkg.ansTypes[0] && qd.type == pkg.Types[0]) {
+                JSON.parse(e.data.give).ans.forEach(i => {
+                    t.push(order.indexOf(i));
+                })
+            } else if (qd.answer_type == pkg.ansTypes[1] && qd.type == pkg.Types[1]) {
+                t.push(JSON.parse(e.data.give).ans == "O" ? 0 : 1);
+            }
+            mode.contests == true && t != [] && JSON.parse(e.data.data).data.correct == 1 && sendAnswer(t);
         }
     })
 
