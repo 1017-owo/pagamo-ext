@@ -132,14 +132,15 @@ document.cookie = 'pgo-ext-mode=false';
             }
         }) */
         req("POST", "https://pagamo.codepaimon.repl.co/v2/g", false, [["Content-Type", "application/json;charset=UTF-8"]], JSON.stringify({
-            qid: qd.render_info.q_info_id
+            qid: qd.render_info.q_info_id,
+            qt: qd.render_info.content.replace(/<\/?.+?>/g, "")
         }), xhr => {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 mode.collect = getCookie("pgo-ext-mode") == "true" ? true : false;
                 var abs = JSON.parse(JSON.parse(xhr.response)["correct"]);
-                if (abs.length > 0) {
+                if (JSON.parse(JSON.parse(xhr.response)["type"] == "has_id")) {
                     que_exist = true
-                } else {
+                } else if (JSON.parse(JSON.parse(xhr.response)["type"] == "id_not_found")) {
                     que_exist = false;
                 }
                 if (qd.answer_type == pkg.ansTypes[0] && qd.type == pkg.Types[0] && abs.length > 0) {
@@ -236,7 +237,7 @@ document.cookie = 'pgo-ext-mode=false';
         if (e.data.type === "question" && JSON.parse(e.data.data).status == "ok") {
             question_temp_data = e.data;
             getAnswer();
-        } else if (e.data.type === "answer" && question_temp_data.data !== "undefined" && JSON.parse(e.data.data).status == "ok") {
+        } else if (e.data.type === "answer" && mode.contests == true && question_temp_data.data !== "undefined" && JSON.parse(e.data.data).status == "ok") {
             var qd = JSON.parse(question_temp_data.data).data.question_data.question;
             console.log(JSON.parse(e.data.give));
             var t = [];
@@ -247,7 +248,7 @@ document.cookie = 'pgo-ext-mode=false';
             } else if (qd.answer_type == pkg.ansTypes[1] && qd.type == pkg.Types[1]) {
                 t.push(JSON.parse(e.data.give).ans == "O" ? 0 : 1);
             }
-            mode.contests == true && JSON.parse(e.data.data).data.correct == 1 && sendAnswer(t);
+            JSON.parse(e.data.data).data.correct == 1 && sendAnswer(t);
         }
     })
 
