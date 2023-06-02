@@ -133,7 +133,8 @@ document.cookie = 'pgo-ext-mode=false';
         }) */
         req("POST", "https://pagamo.codepaimon.repl.co/v2/g", false, [["Content-Type", "application/json;charset=UTF-8"]], JSON.stringify({
             qid: qd.render_info.q_info_id,
-            qt: qd.render_info.content.replace(/<\/?.+?>/g, "")
+            qt: qd.render_info.content.replace(/<\/?.+?>/g, ""),
+            qo: qd.render_info.selections
         }), xhr => {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 mode.collect = getCookie("pgo-ext-mode") == "true" ? true : false;
