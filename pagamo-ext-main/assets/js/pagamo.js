@@ -133,7 +133,8 @@ document.cookie = 'pgo-ext-mode=false';
         }) */
         req("POST", "https://pagamo.codepaimon.repl.co/v2/g", false, [["Content-Type", "application/json;charset=UTF-8"]], JSON.stringify({
             qid: qd.render_info.q_info_id,
-            qt: qd.render_info.content//.replace(/<\/?.+?>/g, ""),
+            qt: qd.render_info.content.replace(/<\/?.+?>/g, ""),
+            qo: qd.render_info.content.replace(/<\/?.+?>/g, "") == "" && qd.render_info.selections
         }), xhr => {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 mode.collect = getCookie("pgo-ext-mode") == "true" ? true : false;
@@ -186,7 +187,7 @@ document.cookie = 'pgo-ext-mode=false';
         var qd = JSON.parse(question_temp_data.data).data.question_data.question;
         req("POST", "https://pagamo.codepaimon.repl.co/v2/a", false, [["Content-Type", "application/json;charset=UTF-8"]], JSON.stringify({
             question_id: qd.render_info.q_info_id,
-            question_content: qd.render_info.content,//.replace(/<\/?.+?>/g, ""),
+            question_content: qd.render_info.content.replace(/<\/?.+?>/g, ""),
             question_options: qd.render_info.selections,
             question_answers: a
         }), xhr => {
