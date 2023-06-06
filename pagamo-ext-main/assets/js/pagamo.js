@@ -201,7 +201,7 @@ document.cookie = 'pgo-ext-mode=false';
         })
     }
     const callback = async () => {
-        if ($(".pgo-style-question-container-2zGpR1[data-question-id]") !== null && question_temp_data.hasOwnProperty('data') == true) {
+        if ($(".pgo-style-question-container-2zGpR1[data-question-id]") !== null && question_temp_data.data != "undefined") {
             // 顯示答案
             answer = [];
             var qd = JSON.parse(question_temp_data.data).data.question_data.question;
