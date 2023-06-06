@@ -6,10 +6,11 @@
 # 安裝方式
 1. 點擊 " Code "
 2. 點擊 " Download ZIP "
-3. 於 Google Chrome 中輸入 chrome://extensions/
-4. 開啟右上角的開發人員模式
-5. 點擊 " 載入未封裝項目 "
-6. 開啟 pagamo-ext-main 資料夾中的 pagamo-ext-main ```( 下載位置 / pagamo-ext-main / pagamo-ext-main )```
+3. 解壓縮 `pagamo-ext-main`
+5. 於 Google Chrome 中輸入 chrome://extensions/
+6. 開啟右上角的開發人員模式
+7. 點擊 " 載入未封裝項目 "
+8. 開啟 `pagamo-ext-main` ( 已解壓縮 ) 資料夾中的 `pagamo-ext-main` ( ```下載位置 / pagamo-ext-main / pagamo-ext-main``` )
 
 # 示例
 
