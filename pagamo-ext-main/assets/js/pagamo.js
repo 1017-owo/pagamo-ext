@@ -8,7 +8,11 @@
 
 function setcookie(name, value, daysTolive) { let cookie = name + "=" + encodeURIComponent(value); if (typeof daysTolive === "number") cookie += "; max-age =" + (daysTolive * 60 * 60 * 24); document.cookie = cookie; }; function getCookie(cname) { let name = cname + "="; let decodedCookie = decodeURIComponent(document.cookie); let ca = decodedCookie.split(';'); for (let i = 0; i < ca.length; i++) { let c = ca[i]; while (c.charAt(0) == ' ') { c = c.substring(1); } if (c.indexOf(name) == 0) { return c.substring(name.length, c.length); } } return ""; };
 
-var globalWindow = window.top.window;
+const delay = (delayInms) => {
+    return new Promise(resolve => setTimeout(resolve, delayInms));
+}
+
+/*var globalWindow = window.top.window;
 
 function monitorRequests() {
     // 監聽 XMLHttpRequest
@@ -64,6 +68,85 @@ function monitorRequests() {
 }
 
 monitorRequests();
+*/
+
+const randomString = (__v__) => {
+    if (!__v__) return console.warn('Option Invalid');
+    var __s__l = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'Q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '2', '3', '4', '5', '6', '7', '8', '9'],
+        returndui = '';
+    for (let i = 0; i < __v__; i++) {
+        returndui += __s__l[Math.floor(Math.random() * __s__l.length)];
+    }
+    return returndui;
+}
+
+var __ext_v2_verify_token = {
+    main: randomString(24),
+    chunck: randomString(30),
+    check: randomString(8)
+}
+
+var script = document.createElement('div');
+script.setAttribute("ext-node-name", "script");
+script.setAttribute("onclick", `
+
+    var globalWindow = window;
+
+    // 監聽 XMLHttpRequest
+    const originalXhrOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, url) {
+        this._url = url;
+        return originalXhrOpen.apply(this, arguments);
+    };
+
+    const originalXhrSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function (d) {
+        const xhr = this;
+        const originalOnReadyStateChange = xhr.onreadystatechange;
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (xhr._url == "/rooms/train.json" || xhr._url == "/rooms/attack.json") {
+                    window.postMessage({ type: "question", data: xhr.response, url: xhr._url }, window.location.origin);
+                } else if (xhr._url == "/rooms/submit.json") {
+                    window.postMessage({ type: "answer", data: xhr.response, url: xhr._url, give: decodeURI(d) }, window.location.origin);
+                }            
+            }
+            if (originalOnReadyStateChange) {
+                originalOnReadyStateChange.apply(this, arguments);
+            }
+        };
+        return originalXhrSend.apply(this, arguments);
+    };
+
+    // 監聽 fetch
+    const originalFetch = globalWindow.fetch;
+    globalWindow.fetch = function (url, options) {
+        return originalFetch.apply(this, arguments).then(response => {
+            console.log("fetch response received:", url, response);
+            return response;
+        });
+    };
+
+    // 監聽 WebSocket
+    const originalWebSocket = globalWindow.WebSocket;
+    globalWindow.WebSocket = function (url, protocols) {
+        console.log("WebSocket connection established:", url, protocols);
+        const socket = new originalWebSocket(url, protocols);
+        const originalSend = socket.send;
+        socket.send = function (data) {
+            console.log("WebSocket message sent:", data);
+            return originalSend.apply(this, arguments);
+        };
+        socket.addEventListener("message", function (event) {
+            console.log("WebSocket message received:", event.data);
+        });
+        return socket;
+    };
+document.cookie = "pgo-ext-ud=" + JSON.stringify(window.currentGc);
+window.postMessage({ type: "verify", data: JSON.stringify(window.currentGc) }, window.location.origin);
+`)
+document.body.appendChild(script);
+
 
 document.cookie = 'pgo-ext-mode=false';
 
@@ -217,7 +300,7 @@ document.cookie = 'pgo-ext-mode=false';
                     document.querySelector(".pgo-style-question-detail-info-l7L8qm").innerHTML == "O" ? answer = [0] : answer = [1]
                 }
             }
-            answer !== null && (pkg.msg(`Question：${question}\nOptions：${option}\nAnswer：${answer}`), sendAnswer(answer));
+            answer !== null && sendAnswer(answer);
         }
     }
     const ob = new MutationObserver(callback);
@@ -226,7 +309,7 @@ document.cookie = 'pgo-ext-mode=false';
     });
 
     var style = document.createElement("style");
-    style.innerHTML = `*{user-select: auto !important;}.ext-setting{position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; z-index: 99999999; background: rgba(101, 101, 101, .9); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23fff' class='w-6 h-6' style='width: 30px;height: 30px'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3C/svg%3E%0A"); background-size: 40px; background-repeat: space; background-position: center; border-radius: 50%; padding: 10px; cursor: pointer;}.switch{position: relative; display: inline-block; width: 70px; height: 34px; scale: .7; display: flex; align-items: center; margin-left: 15px;}/* Hide default HTML checkbox */.switch input{opacity: 0; width: 0; height: 0;}/* The slider */.slider{position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s;}.slider:before{position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s;}input:checked+.slider{background-color: #2196F3;}input:focus+.slider{box-shadow: 0 0 1px #2196F3;}input:checked+.slider:before{-webkit-transform: translateX(36px); -ms-transform: translateX(36px); transform: translateX(36px);}/* Rounded sliders */.slider.round{border-radius: 34px;}.slider.round:before{border-radius: 50%;}.switch-description{-webkit-transform: translateX(81px); -ms-transform: translateX(81px); transform: translateX(81px); font-size: 142%; white-space: nowrap; position: absolute;}section.title{text-align: center; margin-top: 30px; margin-bottom: 15px; font-size: 18px;}.ext-modal.ext-modal-hide{display: none;}.ext-modal{display: flex;}.ext-mode-modal{z-index: 9999; background: #fff; padding: 10px;width: 50vw; max-width: 450px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;}.close{float: right; width: 30px; height: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23000' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' /%3E%3C/svg%3E%0A"); text-align: right; position: relative; right: 5px;}.ext-mode{display: flex; align-items: center; align-content: space-around;}label.switch{margin: auto 0;}.ext-modal{width: 100vw; height: 100vh;top: 0; position: fixed; z-index: 9999; align-items: center; justify-content: center; background: rgba(0, 0, 0, .4); backdrop-filter: blur(2px);}[pgo-ext-active-btn]{border: 5px solid #4285f4 !important; border-radius: 5px;}`;
+    style.innerHTML = `*{user-select: auto !important;}.ext-setting{position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; z-index: 99999999; background: rgba(101, 101, 101, .9); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23fff' class='w-6 h-6' style='width: 30px;height: 30px'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3C/svg%3E%0A"); background-size: 40px; background-repeat: space; background-position: center; border-radius: 50%; padding: 10px; cursor: pointer;}.switch{position: relative; display: inline-block; width: 70px; height: 34px; scale: .7; display: flex; align-items: center; margin-left: 15px;}/* Hide default HTML checkbox */.switch input{opacity: 0; width: 0; height: 0;}/* The slider */.slider{position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s;}.slider:before{position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s;}input:checked+.slider{background-color: #2196F3;}input:focus+.slider{box-shadow: 0 0 1px #2196F3;}input:checked+.slider:before{-webkit-transform: translateX(36px); -ms-transform: translateX(36px); transform: translateX(36px);}/* Rounded sliders */.slider.round{border-radius: 34px;}.slider.round:before{border-radius: 50%;}.switch-description{-webkit-transform: translateX(81px); -ms-transform: translateX(81px); transform: translateX(81px); font-size: 142%; white-space: nowrap; position: absolute;}section.title{text-align: center; margin-top: 30px; margin-bottom: 15px; font-size: 18px;}.ext-modal.ext-modal-hide{display: none;}.ext-modal{display: flex;}.ext-mode.ext-warn-mode{overflow-y: auto;}.ext-mode-modal{z-index: 9999; background: #fff; padding: 10px;width: 50vw; max-width: 450px; border-radius: 5px; display: flex; justify-content: space-between; }.close{float: right; width: 30px; height: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23000' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' /%3E%3C/svg%3E%0A"); text-align: right;position: sticky;right: 5px;top: 0;flex: none;}.ext-mode{display: flex; align-items: center; align-content: space-around;}label.switch{margin: auto 0;}.ext-modal{width: 100vw; height: 100vh;top: 0; position: fixed; z-index: 9999; align-items: center; justify-content: center; background: rgba(0, 0, 0, .4); backdrop-filter: blur(2px);}[pgo-ext-active-btn]{border: 5px solid #4285f4 !important; border-radius: 5px;}span.ext-modal-warn {padding: 5px 10px;font-size: 120%;}pre.warning {margin-top: 10px;}`;
     document.head.appendChild(style);
 
     window.top.window.addEventListener('ajaxReadyStateChange', function (e) {
@@ -234,6 +317,8 @@ document.cookie = 'pgo-ext-mode=false';
     })
 
     pkg.msg("PaGamO Answer Database Loaded.");
+
+    var verified = false;
 
     window.addEventListener("message", (e) => {
         console.log(e)
@@ -252,10 +337,13 @@ document.cookie = 'pgo-ext-mode=false';
                 t.push(JSON.parse(e.data.give).ans == "O" ? 0 : 1);
             }
             JSON.parse(e.data.data).data.correct == 1 && sendAnswer(t);
+        } else if (e.data.type == "verify") {
+            console.log("Verified, Data :", JSON.parse(e.data.data), "Using token :", __ext_v2_verify_token.main);
+            verified = true;
         }
     })
 
-    window.addEventListener("load", () => {
+    window.addEventListener("load", async () => {
         var setting = document.createElement("div");
         setting.classList.add("ext-setting");
         setting.setAttribute("onclick", 'document.querySelector(".ext-modal").classList.remove("ext-modal-hide")')
@@ -264,6 +352,14 @@ document.cookie = 'pgo-ext-mode=false';
         modal.innerHTML = `<div class="ext-mode-modal"><div class="ext-mode"><label class="switch" data-btn="collect" ${mode.contests == true && 'style="cursor: not-allowed"'}><input type="checkbox" onchange="var g = false;if (this.checked == true) g=true;document.cookie = 'pgo-ext-mode=' + g" ${mode.contests == true && "disabled"}><span class="slider round"></span><span class="switch-description">Collect Mode</span></label></div><div class="close" onclick="this.parentNode.parentNode.classList.add('ext-modal-hide')"></div></div>`;
         modal.className = "ext-modal ext-modal-hide";
         document.body.appendChild(modal);
+        $('[ext-node-name="script"]').click();
+        await delay(1000);
+        if (verified == false) {
+            var modal = document.createElement("div");
+            modal.innerHTML = `<div class="ext-mode-modal"><div class="ext-mode ext-warn-mode"><span class="ext-modal-warn">警告 : PaGamO 答案資料庫未成功載入，請在主控台中 ( Console ) 輸入以下代碼以啟用</span></div><div class="close" onclick="this.parentNode.parentNode.remove();"></div></div>`;
+            modal.className = "ext-modal";
+            document.body.appendChild(modal);
+        }
     })
     //})
 })()

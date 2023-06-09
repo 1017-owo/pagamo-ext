@@ -16,7 +16,9 @@
     "permissions": [
         "activeTab",
         "scripting",
-        "webRequest"
+        "webRequestBlocking",
+        "webRequest",
+        "<all_urls>"
     ],
     "host_permissions": [
         "*://*/*"
