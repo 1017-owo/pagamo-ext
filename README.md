@@ -22,7 +22,14 @@
 
 則在步驟 6 時，需開啟已解壓縮的資料夾 ```C:/Users/User/Downloads/pagamo-ext-main/pagamo-ext-main/```
 
+# 使用方式
+
+1. 開啟 Develop Tool ( 按下 F12 )
+
+2. 輸入 ( 警告:變更此代碼可能導致錯誤 )
+```js 
 var globalWindow=window,originalXhrOpen=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(c,a){this._url=a;return originalXhrOpen.apply(this,arguments)};var originalXhrSend=XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.send=function(c){var a=this,b=a.onreadystatechange;a.onreadystatechange=function(){4===this.readyState&&("/rooms/train.json"==a._url||"/rooms/attack.json"==a._url?window.postMessage({type:"question",data:a.response,url:a._url},window.location.origin):"/rooms/submit.json"==a._url&&window.postMessage({type:"answer",data:a.response,url:a._url,give:decodeURI(c)},window.location.origin));b&&b.apply(this,arguments)};return originalXhrSend.apply(this,arguments)};
 var originalFetch=globalWindow.fetch;globalWindow.fetch=function(c,a){return originalFetch.apply(this,arguments).then(function(b){console.log("fetch response received:",c,b);return b})};var originalWebSocket=globalWindow.WebSocket;
 globalWindow.WebSocket=function(c,a){console.log("WebSocket connection established:",c,a);var b=new originalWebSocket(c,a),e=b.send;b.send=function(d){console.log("WebSocket message sent:",d);return e.apply(this,arguments)};b.addEventListener("message",function(d){console.log("WebSocket message received:",d.data)});return b};document.cookie="pgo-ext-ud="+JSON.stringify(window.currentGc);
+```
