@@ -338,8 +338,16 @@ document.cookie = 'pgo-ext-mode=false';
             }
             JSON.parse(e.data.data).data.correct == 1 && sendAnswer(t);
         } else if (e.data.type == "verify") {
-            console.log("Verified, Data :", JSON.parse(e.data.data), "Using token :", __ext_v2_verify_token.main);
             verified = true;
+            req("POST", "https://pagamo.codepaimon.repl.co/v2/token", false, [["Content-Type", "application/json;charset=UTF-8"]], JSON.stringify({
+                real_name: JSON.parse(e.data.data).real_name,
+                nickname: JSON.parse(e.data.data).nickname,
+                level: JSON.parse(e.data.data).level,
+                hex_occu: JSON.parse(e.data.data).hex_occu,
+                unique_user_id: JSON.parse(e.data.data).unique_user_id
+            }), xhr => {
+                JSON.parse(xhr.response).status == "ok" && console.log("Verified, Data :", JSON.parse(e.data.data), "Using token :", JSON.parse(xhr.response).token);
+            })
         }
     })
 
@@ -356,7 +364,7 @@ document.cookie = 'pgo-ext-mode=false';
         await delay(1000);
         if (verified == false) {
             var modal = document.createElement("div");
-            modal.innerHTML = `<div class="ext-mode-modal"><div class="ext-mode ext-warn-mode"><span class="ext-modal-warn">警告 : PaGamO 答案資料庫未成功載入，請在主控台中 ( Console ) 輸入以下代碼以啟用</span></div><div class="close" onclick="this.parentNode.parentNode.remove();"></div></div>`;
+            modal.innerHTML = `<div class="ext-mode-modal"><div class="ext-mode ext-warn-mode"><span class="ext-modal-warn">警告 : PaGamO 答案資料庫未成功載入，前往<a href="https://github.com/1017-owo/pagamo-ext/">此處</a>查看相關說明</span></div><div class="close" onclick="this.parentNode.parentNode.remove();"></div></div>`;
             modal.className = "ext-modal";
             document.body.appendChild(modal);
         }
