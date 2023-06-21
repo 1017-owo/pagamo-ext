@@ -22,7 +22,7 @@
 
 則在步驟 6 時，需開啟已解壓縮的資料夾 ```C:/Users/User/Downloads/pagamo-ext-main/pagamo-ext-main/```
 
-# 使用方式 ( 若未出現警告視窗，即代表成功安裝，無須進行此步驟 )
+# 使用方式 ( 出現警告視窗時才須進行此步驟 )
 
 1. 開啟 Develop Tool ( 按下 `F12` ) 
 
